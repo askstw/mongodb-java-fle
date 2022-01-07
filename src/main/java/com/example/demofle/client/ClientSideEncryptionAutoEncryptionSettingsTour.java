@@ -74,8 +74,6 @@ public class ClientSideEncryptionAutoEncryptionSettingsTour {
                 .autoEncryptionSettings(autoEncryptionSettings)
                 .applyConnectionString(new ConnectionString(connectionString))
                 .build();
-
-
                 
         MongoClient mongoClient = MongoClients.create(clientSettings);
 

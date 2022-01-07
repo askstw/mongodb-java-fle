@@ -8,6 +8,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 
+import org.bson.BsonBinary;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;
@@ -17,7 +19,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 
-public class CheckEncrypt {
+public class CheckDataKey {
     public static void main(String[] args) throws IOException {
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -36,7 +38,10 @@ public class CheckEncrypt {
         Document doc = collection
             .find(query)
             .first();
+
+        Binary b = (Binary) doc.get("_id");
+        System.out.println("encodeDataKey = " + Base64.getEncoder().encodeToString(b.getData()));        
+
         
-        System.out.println("CheckEncrypt = " + doc);
     }
 }
