@@ -1,4 +1,4 @@
-package com.example.demofle.client;
+package com.example.demofle.mongoClient;
 
 import com.mongodb.ClientEncryptionSettings;
 import com.mongodb.ConnectionString;
@@ -25,7 +25,7 @@ import java.util.Map;
 
 //ClientSideEncryptionExplicitEncryptionAndDecryptionTour
 
-public class ClientSideEncryptionExplicit {
+public class WriteEncryptionExplicit {
 
     public static void main(final String[] args) throws Exception {
 

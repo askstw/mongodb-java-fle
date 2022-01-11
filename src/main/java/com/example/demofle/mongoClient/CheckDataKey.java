@@ -1,4 +1,4 @@
-package com.example.demofle.client;
+package com.example.demofle.mongoClient;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -8,8 +8,6 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 
-import org.bson.BsonBinary;
-import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;

@@ -1,9 +1,8 @@
-package com.example.demofle.client;
+package com.example.demofle.mongoClient;
 
 import java.io.IOException;
 import java.util.Base64;
 
-import org.bson.BsonBinary;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;

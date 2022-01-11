@@ -1,4 +1,4 @@
-package com.example.demofle.client;
+package com.example.demofle.mongoClient;
 
 import com.mongodb.AutoEncryptionSettings;
 import com.mongodb.ConnectionString;

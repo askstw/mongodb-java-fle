@@ -1,11 +1,9 @@
-package com.example.demofle.templ;
+package com.example.demofle.mongoTemplate;
 
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -17,7 +15,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
-public class QueryEncrypt {
+public class WriteEncrypt {
 
   public static void main(String[] args) throws Exception {
 
@@ -75,17 +73,17 @@ public class QueryEncrypt {
     
     MongoOperations mongoTemplate = new MongoTemplate(mongoClient, "test");
     
-    System.out.println("1");
-    Query query = Query.query(Criteria.where("firstName").is("Caspar"));
-    System.out.println("query = " + query.toString());
+    Customer customer = new Customer(); 
+    customer.setFirstName("Caspar"); 
+    customer.setLastName("Chang"); 
+    customer.setAge("30"); 
+    mongoTemplate.save(customer);
 
-    System.out.println("2");
-    Customer customer = mongoTemplate.findOne(query, Customer.class);
-    System.out.println("customer = " + customer.toString());
-
-    System.out.println("3");
-    Document c = mongoTemplate.findOne(query, Document.class, "customer");
-    System.out.println("document = " + c.toString());
-
+    Document c = new Document()
+      .append("firstName", "Esther")
+      .append("lastName", "Yu")
+      .append("age", "20");
+    
+    mongoTemplate.save(c, "customer");
   }
 }

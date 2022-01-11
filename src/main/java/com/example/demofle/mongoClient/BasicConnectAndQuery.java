@@ -1,4 +1,4 @@
-package com.example.demofle.client;
+package com.example.demofle.mongoClient;
 
 import static com.mongodb.client.model.Filters.eq;
 import org.bson.Document;
