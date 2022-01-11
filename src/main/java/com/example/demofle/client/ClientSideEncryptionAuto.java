@@ -11,7 +11,6 @@ import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.LoggerFactory;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -20,7 +19,9 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientSideEncryptionAutoEncryptionSettingsTour { 
+//ClientSideEncryptionAutoEncryptionSettingsTour
+
+public class ClientSideEncryptionAuto {
     public static void main(final String[] args) throws Exception {
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -34,47 +35,53 @@ public class ClientSideEncryptionAutoEncryptionSettingsTour {
         String collName = "colb";
 
         String path = "master-key.txt";
-        byte[] localMasterKey= new byte[96];
+        byte[] localMasterKey = new byte[96];
         try (FileInputStream fis = new FileInputStream(path)) {
             fis.readNBytes(localMasterKey, 0, 96);
         }
 
-        Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>() {{
-           put("local", new HashMap<String, Object>() {{
-               put("key", localMasterKey);
-           }});
-        }};
+        Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>() {
+            {
+                put("local", new HashMap<String, Object>() {
+                    {
+                        put("key", localMasterKey);
+                    }
+                });
+            }
+        };
 
         AutoEncryptionSettings autoEncryptionSettings = AutoEncryptionSettings.builder()
                 .keyVaultNamespace(keyVaultNamespace)
                 .kmsProviders(kmsProviders)
-                .schemaMap(new HashMap<String, BsonDocument>() {{
-                    put(dbName + "." + collName,
-                            // Need a schema that references the new data key
-                            BsonDocument.parse("{"
-                                    + "  properties: {"
-                                    + "    encryptedField: {"
-                                    + "      encrypt: {"
-                                    + "        keyId: [{"
-                                    + "          \"$binary\": {"
-                                    + "            \"base64\": \"" + base64DataKeyId + "\","
-                                    + "            \"subType\": \"04\""
-                                    + "          }"
-                                    + "        }],"
-                                    + "        bsonType: \"string\","
-                                    + "        algorithm: \"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic\""
-                                    + "      }"
-                                    + "    }"
-                                    + "  },"
-                                    + "  \"bsonType\": \"object\""
-                                    + "}"));
-                }}).build();
+                .schemaMap(new HashMap<String, BsonDocument>() {
+                    {
+                        put(dbName + "." + collName,
+                                // Need a schema that references the new data key
+                                BsonDocument.parse("{"
+                                        + "  properties: {"
+                                        + "    encryptedField: {"
+                                        + "      encrypt: {"
+                                        + "        keyId: [{"
+                                        + "          \"$binary\": {"
+                                        + "            \"base64\": \"" + base64DataKeyId + "\","
+                                        + "            \"subType\": \"04\""
+                                        + "          }"
+                                        + "        }],"
+                                        + "        bsonType: \"string\","
+                                        + "        algorithm: \"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic\""
+                                        + "      }"
+                                        + "    }"
+                                        + "  },"
+                                        + "  \"bsonType\": \"object\""
+                                        + "}"));
+                    }
+                }).build();
 
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .autoEncryptionSettings(autoEncryptionSettings)
                 .applyConnectionString(new ConnectionString(connectionString))
                 .build();
-                
+
         MongoClient mongoClient = MongoClients.create(clientSettings);
 
         MongoCollection<Document> collection = mongoClient.getDatabase(dbName).getCollection(collName);
@@ -82,8 +89,8 @@ public class ClientSideEncryptionAutoEncryptionSettingsTour {
         collection.insertOne(new Document("encryptedField", "123456").append("name", "will"));
         collection.insertOne(new Document("encryptedField", "654321").append("name", "caspar"));
 
-        Bson query1 = Filters.eq("name","caspar");
-        Bson query2 = Filters.eq("encryptedField","123456");
+        Bson query1 = Filters.eq("name", "caspar");
+        Bson query2 = Filters.eq("encryptedField", "123456");
 
         System.out.println("query1 : " + collection.find(query1).first().toJson());
         System.out.println("query2 : " + collection.find(query2).first().toJson());
