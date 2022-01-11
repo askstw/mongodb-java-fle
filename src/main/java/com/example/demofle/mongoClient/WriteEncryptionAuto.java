@@ -1,4 +1,4 @@
-package com.example.demofle.client;
+package com.example.demofle.mongoClient;
 
 import com.mongodb.AutoEncryptionSettings;
 import com.mongodb.ConnectionString;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 //ClientSideEncryptionAutoEncryptionSettingsTour
 
-public class ClientSideEncryptionAuto {
+public class WriteEncryptionAuto {
     public static void main(final String[] args) throws Exception {
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();

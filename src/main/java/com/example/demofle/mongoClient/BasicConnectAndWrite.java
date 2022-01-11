@@ -1,4 +1,4 @@
-package com.example.demofle.client;
+package com.example.demofle.mongoClient;
 
 import org.bson.Document;
 import ch.qos.logback.classic.Level;

@@ -1,4 +1,4 @@
-package com.example.demofle.repo;
+package com.example.demofle.repository;
 
 import org.springframework.data.annotation.Id;
 

@@ -1,4 +1,4 @@
-package com.example.demofle.templ;
+package com.example.demofle.mongoTemplate;
 
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
