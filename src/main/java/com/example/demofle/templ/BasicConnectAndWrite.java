@@ -10,8 +10,8 @@ public class BasicConnectAndWrite {
 
   public static void main(String[] args) throws Exception {
 
-    String uri = "mongodb://c:c@13.214.135.136:27077";
-    MongoOperations mongoTemplate = new MongoTemplate(MongoClients.create(uri), "test");
+    String connectionString = "mongodb://c:c@13.214.135.136:27077";
+    MongoOperations mongoTemplate = new MongoTemplate(MongoClients.create(connectionString), "test");
 
     Customer customer = new Customer(); 
     customer.setFirstName("Caspar"); 
