@@ -1,6 +1,8 @@
 package com.example.demofle.mongoClient;
 
+import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -11,11 +13,12 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 
-public class BasicConnectAndWrite {
+public class BasicConnectAndDelete {
 
-    public static void main(String[] args) throws Exception {
+    public static void main( String[] args ) throws Exception {
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
@@ -26,20 +29,18 @@ public class BasicConnectAndWrite {
         String collName = "customer";
 
         MongoClient mongoClient = MongoClients.create(connectionString);
-
+        
         MongoDatabase database = mongoClient.getDatabase(dbName);
         MongoCollection<Document> collection = database.getCollection(collName);
 
-        Document doc = new Document()
-                .append("firstName", "Caspar")
-                .append("lastName", "Chang")
-                .append("age", 36);
-
-        InsertOneResult result = collection.insertOne(doc);
+        //Bson query = Filters.eq("firstName", "Caspar");  
+        Bson query = new BsonDocument();
+        
+        DeleteResult result = collection.deleteMany(query);
 
         if (result != null)
-            System.out.println("query1 : " + result.toString());
-
+            System.out.println(result.toString());
+        
     }
 
 }

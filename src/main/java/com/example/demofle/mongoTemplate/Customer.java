@@ -10,13 +10,14 @@ public class Customer {
 
   public String firstName;
   public String lastName;
-  public String age;
+  public int age;
 
   public Customer() {}
 
-  public Customer(String firstName, String lastName, String age) {
+  public Customer(String firstName, String lastName, int age) {
     this.firstName = firstName;
     this.lastName = lastName;
+    this.age = age;
   }
 
   public void setFirstName(String firstName){
@@ -27,8 +28,12 @@ public class Customer {
     this.lastName = lastName;
   }
 
-  public void setAge(String age){
+  public void setAge(int age){
     this.age = age;
+  }
+
+  public int getAge(){
+    return age;
   }
 
   @Override

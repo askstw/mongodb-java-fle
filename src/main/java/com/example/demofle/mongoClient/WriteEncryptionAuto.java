@@ -32,7 +32,7 @@ public class WriteEncryptionAuto {
         String keyVaultNamespace = "encryption.__keyVault";
         String base64DataKeyId = "87j9MH/FR6e9x2PIXkBiaQ==";
         String dbName = "test";
-        String collName = "colb";
+        String collName = "customer";
 
         String path = "master-key.txt";
         byte[] localMasterKey = new byte[96];
@@ -59,7 +59,7 @@ public class WriteEncryptionAuto {
                                 // Need a schema that references the new data key
                                 BsonDocument.parse("{"
                                         + "  properties: {"
-                                        + "    encryptedField: {"
+                                        + "    age: {"
                                         + "      encrypt: {"
                                         + "        keyId: [{"
                                         + "          \"$binary\": {"
@@ -67,7 +67,7 @@ public class WriteEncryptionAuto {
                                         + "            \"subType\": \"04\""
                                         + "          }"
                                         + "        }],"
-                                        + "        bsonType: \"string\","
+                                        + "        bsonType: \"int\","
                                         + "        algorithm: \"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic\""
                                         + "      }"
                                         + "    }"
@@ -86,11 +86,16 @@ public class WriteEncryptionAuto {
 
         MongoCollection<Document> collection = mongoClient.getDatabase(dbName).getCollection(collName);
 
-        collection.insertOne(new Document("encryptedField", "123456").append("name", "will"));
-        collection.insertOne(new Document("encryptedField", "654321").append("name", "caspar"));
+        collection.insertOne(new Document("firstName", "Caspar")
+                .append("lastName", "Chang")
+                .append("age", 36));
 
-        Bson query1 = Filters.eq("name", "caspar");
-        Bson query2 = Filters.eq("encryptedField", "123456");
+        collection.insertOne(new Document("firstName", "Esther")
+                .append("lastName", "Yu")
+                .append("age", 30));
+
+        Bson query1 = Filters.eq("firstName", "Caspar");
+        Bson query2 = Filters.eq("age", 30);
 
         System.out.println("query1 : " + collection.find(query1).first().toJson());
         System.out.println("query2 : " + collection.find(query2).first().toJson());

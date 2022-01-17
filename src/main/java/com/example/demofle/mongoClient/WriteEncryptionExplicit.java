@@ -6,12 +6,14 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.vault.EncryptOptions;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
 import org.bson.BsonBinary;
-import org.bson.BsonString;
+import org.bson.BsonInt32;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.Binary;
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.Level;
@@ -36,6 +38,8 @@ public class WriteEncryptionExplicit {
         String connectionString = "mongodb://c:c@13.214.135.136:27077";
         String keyVaultNamespace = "encryption.__keyVault";
         String base64KeyId = "87j9MH/FR6e9x2PIXkBiaQ==";
+        String dbName = "test";
+        String collName = "customer";
 
         String path = "master-key.txt";
         byte[] localMasterKey = new byte[96];
@@ -59,7 +63,7 @@ public class WriteEncryptionExplicit {
 
         MongoClient mongoClient = MongoClients.create(clientSettings);
 
-        MongoCollection<Document> collection = mongoClient.getDatabase("test").getCollection("colb");
+        MongoCollection<Document> collection = mongoClient.getDatabase(dbName).getCollection(collName);
 
         // Create the ClientEncryption instance
         ClientEncryptionSettings clientEncryptionSettings = ClientEncryptionSettings.builder()
@@ -72,22 +76,24 @@ public class WriteEncryptionExplicit {
 
         ClientEncryption clientEncryption = ClientEncryptions.create(clientEncryptionSettings);
 
-        // BsonBinary dataKeyId = clientEncryption.createDataKey("local", new
-        // DataKeyOptions());
         BsonBinary dataKeyId = new BsonBinary(Base64.getDecoder().decode(base64KeyId));
 
         // Explicitly encrypt a field
-        BsonBinary encryptedFieldValue = clientEncryption.encrypt(new BsonString("123456789"),
+        BsonBinary encryptedFieldValue = clientEncryption.encrypt(new BsonInt32(4),
                 new EncryptOptions("AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic").keyId(dataKeyId));
 
-        collection.insertOne(new Document("encryptedField", encryptedFieldValue).append("name", "esther"));
+        collection.insertOne(new Document("firstName", "Curry")
+                .append("lastName", "Chang")
+                .append("age", encryptedFieldValue));
 
-        Document doc = collection.find().first();
+                
+        Bson query1 = Filters.eq("firstName", "Curry");
+        Document doc = collection.find(query1).first();
         System.out.println("Encrypt Document : " + doc.toJson());
 
         // Explicitly decrypt the field
-        System.out.println("Decrypt encryptedField : "
-                + clientEncryption.decrypt(new BsonBinary(doc.get("encryptedField", Binary.class).getData())));
+        System.out.println("Decrypt Age : "
+                + clientEncryption.decrypt(new BsonBinary(doc.get("age", Binary.class).getData())));
 
         // release resources
         clientEncryption.close();
