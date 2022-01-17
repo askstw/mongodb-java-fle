@@ -13,19 +13,18 @@ public class BasicConnectAndQuery {
   public static void main(String[] args) throws Exception {
 
     String connectionString = "mongodb://c:c@13.214.135.136:27077";
-    MongoOperations mongoTemplate = new MongoTemplate(MongoClients.create(connectionString), "test");
+    String dbName = "test";
+    String collName = "customer";
 
-    System.out.println("1");
+    MongoOperations mongoTemplate = new MongoTemplate(MongoClients.create(connectionString), dbName);
+
     Query query = Query.query(Criteria.where("firstName").is("Caspar"));
     System.out.println("query = " + query.toString());
-/*
-    System.out.println("2");
+
     Customer customer = mongoTemplate.findOne(query, Customer.class);
     System.out.println("customer = " + customer.toString());
-*/
-    System.out.println("3");
-    Document c = mongoTemplate.findOne(query, Document.class, "customer");
-    System.out.println("document = " + c.toString());
 
+    Document c = mongoTemplate.findOne(query, Document.class, collName);
+    System.out.println("document = " + c.toString());
   }
 }

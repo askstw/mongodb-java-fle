@@ -11,17 +11,21 @@ public class BasicConnectAndWrite {
   public static void main(String[] args) throws Exception {
 
     String connectionString = "mongodb://c:c@13.214.135.136:27077";
-    MongoOperations mongoTemplate = new MongoTemplate(MongoClients.create(connectionString), "test");
+    String dbName = "test";
+    String collName = "customer";
 
-    Customer customer = new Customer(); 
-    customer.setFirstName("Caspar"); 
-    customer.setLastName("Chang"); 
+    MongoOperations mongoTemplate = new MongoTemplate(MongoClients.create(connectionString), dbName);
+
+    Customer customer = new Customer();
+    customer.setFirstName("Caspar");
+    customer.setLastName("Chang");
+    customer.setAge(36);
     mongoTemplate.save(customer);
 
     Document c = new Document()
-      .append("firstName", "Esther")
-      .append("lastName", "Yu");
-    
-    mongoTemplate.save(c, "customer");
+        .append("firstName", "Esther")
+        .append("lastName", "Yu")
+        .append("age", 32);
+    mongoTemplate.save(c, collName);
   }
 }
