@@ -1,6 +1,9 @@
 package com.example.demofle.mongoClient;
 
 import static com.mongodb.client.model.Filters.eq;
+
+import com.example.demofle.config.Config;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -23,20 +26,15 @@ public class BasicConnectAndQuery {
         Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
         rootLogger.setLevel(Level.OFF);
 
-        String connectionString = "mongodb://c:c@13.214.135.136:27077";
-        String dbName = "test";
-        String collName = "customer";
-
-        MongoClient mongoClient = MongoClients.create(connectionString);
-
-        MongoDatabase database = mongoClient.getDatabase(dbName);
-        MongoCollection<Document> collection = database.getCollection(collName);
+        MongoClient mongoClient = MongoClients.create(Config.connectionString);
+        MongoDatabase database = mongoClient.getDatabase(Config.dbName);
+        MongoCollection<Document> collection = database.getCollection(Config.collName);
 
         Document doc1 = collection.find(eq("firstName", "Caspar")).first();
         if (doc1 != null)
             System.out.println("query1 : " + doc1.toJson());
 
-        Bson query2 = Filters.gt("age", 30);
+        Bson query2 = Filters.eq("age", 36);
         System.out.println("query2 : " + collection.find(query2).first().toJson());
 
     }

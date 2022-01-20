@@ -2,7 +2,6 @@ package com.example.demofle.mongoTemplate;
 
 import org.springframework.data.annotation.Id;
 
-
 public class Customer {
 
   @Id

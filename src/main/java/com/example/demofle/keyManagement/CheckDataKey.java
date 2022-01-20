@@ -1,8 +1,9 @@
-package com.example.demofle.mongoClient;
+package com.example.demofle.keyManagement;
 
 import java.io.IOException;
 import java.util.Base64;
 
+import com.example.demofle.config.Config;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -24,15 +25,11 @@ public class CheckDataKey {
         Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
         rootLogger.setLevel(Level.OFF);
         
-        String connectionString = "mongodb://c:c@13.214.135.136:27077";
-        String keyVaultDb = "encryption";
-        String keyVaultCollection = "__keyVault";
-        String base64KeyId = "87j9MH/FR6e9x2PIXkBiaQ==";
         
-        MongoClient mongoClient = MongoClients.create(connectionString);
-        MongoCollection<Document> collection = mongoClient.getDatabase(keyVaultDb).getCollection(keyVaultCollection);
+        MongoClient mongoClient = MongoClients.create(Config.connectionString);
+        MongoCollection<Document> collection = mongoClient.getDatabase(Config.keyVaultDb).getCollection(Config.keyVaultCollection);
         
-        Bson query = Filters.eq("_id", new Binary((byte) 4, Base64.getDecoder().decode(base64KeyId)));
+        Bson query = Filters.eq("_id", new Binary((byte) 4, Base64.getDecoder().decode(Config.base64DataKeyId)));
         Document doc = collection
             .find(query)
             .first();

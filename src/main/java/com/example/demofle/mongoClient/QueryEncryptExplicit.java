@@ -1,5 +1,6 @@
 package com.example.demofle.mongoClient;
 
+import com.example.demofle.config.Config;
 import com.mongodb.ClientEncryptionSettings;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -33,15 +34,8 @@ public class QueryEncryptExplicit {
                 Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
                 rootLogger.setLevel(Level.OFF);
 
-                String connectionString = "mongodb://c:c@13.214.135.136:27077";
-                String keyVaultNamespace = "encryption.__keyVault";
-                String base64DataKeyId = "87j9MH/FR6e9x2PIXkBiaQ==";
-                String dbName = "test";
-                String collName = "customer";
-
-                String path = "master-key.txt";
                 byte[] localMasterKey = new byte[96];
-                try (FileInputStream fis = new FileInputStream(path)) {
+                try (FileInputStream fis = new FileInputStream(Config.masterKeyFile)) {
                         fis.readNBytes(localMasterKey, 0, 96);
                 }
 
@@ -56,19 +50,18 @@ public class QueryEncryptExplicit {
                 };
 
                 MongoClientSettings clientSettings = MongoClientSettings.builder()
-                                .applyConnectionString(new ConnectionString(connectionString))
+                                .applyConnectionString(new ConnectionString(Config.connectionString))
                                 .build();
 
                 MongoClient mongoClient = MongoClients.create(clientSettings);
-
-                MongoCollection<Document> collection = mongoClient.getDatabase(dbName).getCollection(collName);
+                MongoCollection<Document> collection = mongoClient.getDatabase(Config.dbName).getCollection(Config.collName);
 
                 // Create the ClientEncryption instance
                 ClientEncryptionSettings clientEncryptionSettings = ClientEncryptionSettings.builder()
                                 .keyVaultMongoClientSettings(MongoClientSettings.builder()
-                                                .applyConnectionString(new ConnectionString(connectionString))
+                                                .applyConnectionString(new ConnectionString(Config.connectionString))
                                                 .build())
-                                .keyVaultNamespace(keyVaultNamespace)
+                                .keyVaultNamespace(Config.keyVaultNamespace)
                                 .kmsProviders(kmsProviders)
                                 .build();
 
@@ -83,7 +76,7 @@ public class QueryEncryptExplicit {
                                 + clientEncryption.decrypt(new BsonBinary(doc1.get("age", Binary.class).getData())));
 
                 
-                BsonBinary dataKeyId = new BsonBinary(Base64.getDecoder().decode(base64DataKeyId));
+                BsonBinary dataKeyId = new BsonBinary(Base64.getDecoder().decode(Config.base64DataKeyId));
                 BsonBinary encryptedFieldValue = clientEncryption.encrypt(new BsonInt32(4),
                                 new EncryptOptions("AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic").keyId(dataKeyId));
                 Bson query2 = Filters.eq("age", encryptedFieldValue);

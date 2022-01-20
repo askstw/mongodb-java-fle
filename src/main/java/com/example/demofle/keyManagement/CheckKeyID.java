@@ -1,8 +1,9 @@
-package com.example.demofle.mongoClient;
+package com.example.demofle.keyManagement;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.SecureRandom;
+import java.util.Base64;
+
+import com.example.demofle.config.Config;
 
 import org.slf4j.LoggerFactory;
 
@@ -10,19 +11,15 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 
-public class CreateMasterKey {
- 
+public class CheckKeyID {
     public static void main(String[] args) throws IOException {
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
         rootLogger.setLevel(Level.OFF);
         
-        byte[] localMasterKey = new byte[96];
-        new SecureRandom().nextBytes(localMasterKey);
-
-        try (FileOutputStream stream = new FileOutputStream("master-key.txt")) {
-            stream.write(localMasterKey);
-        }
+        System.out.println("decodeDataKey = " + Base64.getDecoder().decode(Config.base64DataKeyId));        
+        System.out.println("encodeDataKey = " + Base64.getEncoder().encodeToString(Base64.getDecoder().decode(Config.base64DataKeyId)));        
+        
     }
 }
