@@ -1,10 +1,11 @@
-package com.example.demofle.mongoClient;
+package com.example.demofle.keyManagement;
 
 import java.io.FileInputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.demofle.config.Config;
 import com.mongodb.ClientEncryptionSettings;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -20,19 +21,14 @@ import org.slf4j.LoggerFactory;
 
 public class CreateDataKey {
 
-    public static void main( String[] args ) {
+    public static void main(String[] args) throws Exception {
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
         rootLogger.setLevel(Level.OFF);
-        
-        try {
-            String connectionString = "mongodb://c:c@13.214.135.136:27077";
-            String keyVaultNamespace = "encryption.__keyVault";
-            
-            String path = "master-key.txt";
-            byte[] localMasterKey= new byte[96];
-            try (FileInputStream fis = new FileInputStream(path)) {
+
+            byte[] localMasterKey = new byte[96];
+            try (FileInputStream fis = new FileInputStream(Config.masterKeyFile)) {
                 fis.readNBytes(localMasterKey, 0, 96);
             }
             System.out.println("localMasterKey = " + localMasterKey.toString());
@@ -44,24 +40,21 @@ public class CreateDataKey {
             kmsProviders.put("local", keyMap);
 
             ClientEncryptionSettings clientEncryptionSettings = ClientEncryptionSettings.builder()
-        .keyVaultMongoClientSettings(MongoClientSettings.builder()
-            .applyConnectionString(new ConnectionString(connectionString))
-            .build())
-        .keyVaultNamespace(keyVaultNamespace)
-        .kmsProviders(kmsProviders)
-        .build();
+                    .keyVaultMongoClientSettings(MongoClientSettings.builder()
+                            .applyConnectionString(new ConnectionString(Config.connectionString))
+                            .build())
+                    .keyVaultNamespace(Config.keyVaultNamespace)
+                    .kmsProviders(kmsProviders)
+                    .build();
 
             ClientEncryption clientEncryption = ClientEncryptions.create(clientEncryptionSettings);
-            
+
             BsonBinary dataKeyId = clientEncryption.createDataKey("local", new DataKeyOptions());
             System.out.println("DataKeyId [UUID]: " + dataKeyId.asUuid());
 
             String base64DataKeyId = Base64.getEncoder().encodeToString(dataKeyId.getData());
             System.out.println("DataKeyId [base64]: " + base64DataKeyId);
-            
-        } catch (Exception e){
 
-        }
     }
 
 }

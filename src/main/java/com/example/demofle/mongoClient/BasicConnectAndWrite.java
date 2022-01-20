@@ -7,6 +7,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.LoggerFactory;
 
+import com.example.demofle.config.Config;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -21,14 +22,9 @@ public class BasicConnectAndWrite {
         Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
         rootLogger.setLevel(Level.OFF);
 
-        String connectionString = "mongodb://c:c@13.214.135.136:27077";
-        String dbName = "test";
-        String collName = "customer";
-
-        MongoClient mongoClient = MongoClients.create(connectionString);
-
-        MongoDatabase database = mongoClient.getDatabase(dbName);
-        MongoCollection<Document> collection = database.getCollection(collName);
+        MongoClient mongoClient = MongoClients.create(Config.connectionString);
+        MongoDatabase database = mongoClient.getDatabase(Config.dbName);
+        MongoCollection<Document> collection = database.getCollection(Config.collName);
 
         Document doc = new Document()
                 .append("firstName", "Caspar")
