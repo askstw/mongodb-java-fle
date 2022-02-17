@@ -35,7 +35,7 @@ public class BasicConnectAndQuery {
             System.out.println("query1 : " + doc1.toJson());
 
         Bson query2 = Filters.eq("age", 36);
-        System.out.println("query2 : " + collection.find(query2).first().toJson());
+            System.out.println("query2 : " + collection.find(query2).first().toJson());
 
     }
 
