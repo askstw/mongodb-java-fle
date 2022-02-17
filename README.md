@@ -73,6 +73,15 @@ Data is encrypt and decrypt in client side, which client owns the key can encryp
 
 		Firstname, Lastname, Age (Encrypts)
 	
+*		Result in DB side
+	
+	![image](images/1645063651784%402x.jpg)
+	
+*		Result in AP side
+	
+	![image](images/1645063685637%402x.jpg)
+
+
 
 *	Write and Query Encryption Automatic
 > Use AutoEncryptionSettings can setting schemaMap, to make 
