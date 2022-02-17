@@ -1,55 +1,81 @@
-FLE 操作說明
+MongoDB Client-Side Field Level Encryption in Java Practice
+==
+
+![image](client-side-field-level-encryption-diagram.svg)
+
+<br>
+
+Data is encrypt and decrypt in client side, which client owns the key can encrypt and decrypt data, otherwise data is protect.
+
+<br>
+
+1.Understand Reads and Writes in MongoDB
+--
+
+*	Prepare your MongoDB Server and Basic Program
+
+*	Runtime Property：
+> Config Properties
+
+		Config.java (connectionString, dbName, collName)
+
+* There are 2 ways you can interact with MongoDB
+
+*	MongoClient :
+
+> Using MongoDB Java Driver
+
+		BasicConnectAndQuery.java
+		BasicConnectAndWrite.java
+		BasicConnectAndDelete.java
+	
+*	MongoTemplate :
+> Using Springboot MongoDB
+
+		BasicConnectAndQuery.java
+		BasicConnectAndWrite.java
 
 
-1.	了解基礎 MongoDB 讀寫說明
+2.Prepare Encrypt Key and Key Space
+--
 
-準備好 mongodb
-	參數準備：
-		connectionString, dbName, collName
+*	Prepare Key, will using local key feature
 
-MongoClient :
-  BasicConnectAndQuery
-  BasicConnectAndWrite
-  BasicConnectAndDelete
+*	Runtime Property：
+> Config Properties
 
-MongoTemplate :
-  BasicConnectAndQuery
-  BasicConnectAndWrite
+		Config.java (masterKeyFile, keyVaultNamespace, keyVaultDb, keyVaultCollection)
+		
+*	CreateMasterKey :
+	
+		CreateMasterKey.java to create key file master-key.txt
+		only need to run in one time
+  
+*	CreateDataKey
 
-2.	建立 Key and Key Space
+		CreateDataKey.java to create datakey data in db namespace keyVaultNamespace, record base64KeyId
+		only need to run in one time, record base64DataKeyId and insert into Config.java
+  
+*	CheckDataKey
 
-CreateMasterKey
-  產生檔案master-key.txt
-CreateDataKey
-  建立datakey資料於keyVaultNamespace
-  紀錄 base64KeyId
-CheckDataKey
-  確認 base64KeyId 存在於
-
-3.	加密資料自動讀寫
-  記得參數準備
-		connectionString, dbName, collName, keyVaultNamespace, base64DataKeyId
-
-MongoClient :
-	WriteEncryptionAuto
-  QueryEncryptAuto
-
-MongoTemplate :
-	WriteEncryptionAuto
-  QueryEncryptAuto
+		CreateDataKey.java to check base64KeyId exists
 
 
-4.	加密資料手動讀寫
-記得參數準備
-		connectionString, dbName, collName, keyVaultNamespace, base64DataKeyId
+3.Reads and Writes Data in Encryption
+-
 
-MongoClient :
-  WriteEncryptionExplicit
-  QueryEncryptExplicit
+*	Runtime Property：
+> Config Properties
 
-MongoTemplate :
-	WriteEncryptionExplicit
-	QueryEncryptExplicit
+		Config.java ( check all property have been modified )
 
+*	Sample Datamodel：
 
-5.	
+		Firstname, Lastname, Age (Encrypts)
+	
+
+*	Write and Query Encryption Automatic
+> Use AutoEncryptionSettings can setting schemaMap, to make 
+
+*	Write and Query Encryption Manually
+
