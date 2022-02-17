@@ -1,7 +1,7 @@
 MongoDB Client-Side Field Level Encryption in Java Practice
 ==
 
-![image](client-side-field-level-encryption-diagram.svg)
+![image](images/1576230964128.png)
 
 <br>
 
@@ -76,6 +76,8 @@ Data is encrypt and decrypt in client side, which client owns the key can encryp
 
 *	Write and Query Encryption Automatic
 > Use AutoEncryptionSettings can setting schemaMap, to make 
+
+![image](images/CSFLE_Write_Encrypted_Data.png)
 
 *	Write and Query Encryption Manually
 
