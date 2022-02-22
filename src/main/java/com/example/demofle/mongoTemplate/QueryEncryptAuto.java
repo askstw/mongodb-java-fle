@@ -45,22 +45,37 @@ public class QueryEncryptAuto {
             put(Config.nameSpace,
                 // Need a schema that references the new data key
                 BsonDocument.parse("{"
-                    + "  properties: {"
-                    + "    age: {"
-                    + "      encrypt: {"
-                    + "        keyId: [{"
-                    + "          \"$binary\": {"
-                    + "            \"base64\": \"" + Config.base64DataKeyId + "\","
-                    + "            \"subType\": \"04\""
-                    + "          }"
-                    + "        }],"
-                    + "        bsonType: \"int\","
-                    + "        algorithm: \"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic\""
-                    + "      }"
-                    + "    }"
-                    + "  },"
-                    + "  \"bsonType\": \"object\""
-                    + "}"));
+                + "  properties: {"
+
+                + "    age: {"
+                + "      encrypt: {"
+                + "        keyId: [{"
+                + "          \"$binary\": {"
+                + "            \"base64\": \"" + Config.base64DataKeyId + "\","
+                + "            \"subType\": \"04\""
+                + "          }"
+                + "        }],"
+                + "        bsonType: \"int\","
+                + "        algorithm: \"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic\""
+                + "      }"
+                + "    }"
+
+                + "    ,name: {"
+                + "      encrypt: {"
+                + "        keyId: [{"
+                + "          \"$binary\": {"
+                + "            \"base64\": \"" + Config.base64DataKeyId + "\","
+                + "            \"subType\": \"04\""
+                + "          }"
+                + "        }],"
+                + "        bsonType: \"string\","
+                + "        algorithm: \"AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic\""
+                + "      }"
+                + "    }"
+
+                + "  },"
+                + "  \"bsonType\": \"object\""
+                + "}"));
           }
         }).build();
 
@@ -72,13 +87,14 @@ public class QueryEncryptAuto {
     MongoClient mongoClient = MongoClients.create(clientSettings);
     MongoOperations mongoTemplate = new MongoTemplate(mongoClient, Config.dbName);
 
-    Query query1 = Query.query(Criteria.where("firstName").is("Caspar"));
+    //查詢加密欄位 name
+    Query query1 = Query.query(Criteria.where("name").is("張大哥"));
     System.out.println("query1 = " + query1.toString());
 
     Customer customer = mongoTemplate.findOne(query1, Customer.class);
     System.out.println("customer = " + customer.toString());
 
-
+    //查詢加密欄位 age
     Query query2 = Query.query(Criteria.where("age").is(30));
     System.out.println("query2 = " + query2.toString());
 
