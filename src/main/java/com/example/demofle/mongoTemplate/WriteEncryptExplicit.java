@@ -2,6 +2,7 @@ package com.example.demofle.mongoTemplate;
 
 import org.bson.BsonBinary;
 import org.bson.BsonInt32;
+import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -64,16 +65,28 @@ public class WriteEncryptExplicit {
     ClientEncryption clientEncryption = ClientEncryptions.create(clientEncryptionSettings);
 
     BsonBinary dataKeyId = new BsonBinary(Base64.getDecoder().decode(Config.base64DataKeyId));
-    BsonBinary encryptedFieldValue = clientEncryption.encrypt(new BsonInt32(4),
+    
+    BsonBinary encryptedFieldAgeValue = clientEncryption.encrypt(new BsonInt32(4),
         new EncryptOptions("AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic").keyId(dataKeyId));
 
+    BsonBinary encryptedFieldNameValue = clientEncryption.encrypt(new BsonString("大吉"),
+        new EncryptOptions("AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic").keyId(dataKeyId));
+
+
+    //清除舊資料
+    Query query = new Query(Criteria.where("age").is(encryptedFieldAgeValue));
+    mongoTemplate.remove(query, Config.collName);
+
+    //寫入一筆加密資料
     Document c = new Document()
         .append("firstName", "Curry")
         .append("lastName", "Chang")
-        .append("age", encryptedFieldValue);
+        .append("age", encryptedFieldAgeValue)
+        .append("name", encryptedFieldNameValue);
     mongoTemplate.save(c, Config.collName);
 
-    Query query1 = Query.query(Criteria.where("age").is(encryptedFieldValue));
+    //查詢年紀等於加密過後的4
+    Query query1 = Query.query(Criteria.where("age").is(encryptedFieldAgeValue));
     System.out.println("query = " + query1.toString());
 
     Document c1 = mongoTemplate.findOne(query1, Document.class, Config.collName);
@@ -82,14 +95,15 @@ public class WriteEncryptExplicit {
     System.out.println("Decrypt encryptedField : " + clientEncryption
         .decrypt(new BsonBinary(c1.get("age", Binary.class).getData())));
 
-    Query query2 = Query.query(Criteria.where("firstName").is("Curry"));
+    //查詢名字等於加密過後的大吉
+    Query query2 = Query.query(Criteria.where("name").is(encryptedFieldNameValue));
     System.out.println("query = " + query2.toString());
 
     Document c2 = mongoTemplate.findOne(query2, Document.class, Config.collName);
     System.out.println("Encrypt Document : " + c2.toJson());
 
     System.out.println("Decrypt encryptedField : " + clientEncryption
-        .decrypt(new BsonBinary(c2.get("age", Binary.class).getData())));
+        .decrypt(new BsonBinary(c2.get("name", Binary.class).getData())));
 
   }
 }
