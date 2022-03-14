@@ -8,9 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.example.demofle.config.Config;
@@ -20,7 +18,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
-public class QueryEncryptAuto {
+public class QueryEncryptAutoWithCryptd {
 
   public static void main(String[] args) throws Exception {
 
@@ -38,6 +36,12 @@ public class QueryEncryptAuto {
         });
       }
     };
+
+    //List<String> spawnArgs = new ArrayList<String>();
+    //spawnArgs.add("--port=30000");
+
+    Map<String, Object> extraOpts = new HashMap<String, Object>();
+    extraOpts.put("mongocryptdURI", "mongodb://localhost:30000");
 
     AutoEncryptionSettings autoEncryptionSettings = AutoEncryptionSettings.builder()
         .keyVaultNamespace(Config.keyVaultNamespace)
@@ -80,6 +84,7 @@ public class QueryEncryptAuto {
                 + "}"));
           }
         })
+        .extraOptions(extraOpts)
         .build();
 
     MongoClientSettings clientSettings = MongoClientSettings.builder()
