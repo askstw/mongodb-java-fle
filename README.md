@@ -90,3 +90,8 @@ Data is encrypt and decrypt in client side, which client owns the key can encryp
 
 *	Write and Query Encryption Manually
 
+4.Manually Setting mongocryptd
+-
+
+*	Running mongocryptd separately：
+> 
